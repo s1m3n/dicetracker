@@ -14,8 +14,18 @@ A Firebase-powered application for tracking dice rolls with React frontend and P
 
 - Node.js (v20 or later)
 - Python 3.13
+- Java JDK 21 or higher (required for Firebase emulators)
 - Firebase CLI (`npm install -g firebase-tools`)
 - Make (optional, for using Makefile commands)
+
+**Installing Java 21:**
+```bash
+# macOS with Homebrew
+brew install openjdk@21
+
+# Verify installation
+java -version
+```
 
 ## Project Structure
 
@@ -136,16 +146,63 @@ Emulator data is not persisted by default. To persist data between runs, use:
 firebase emulators:start --import=./emulator-data --export-on-exit
 ```
 
+## Authentication
+
+The application uses Google Sign-In for authentication. All users must authenticate to access the app.
+
+### Setup Google Authentication
+
+**For Development (Emulators):**
+1. Start the emulators: `make emulators`
+2. Open the Emulator UI at http://localhost:4000
+3. Go to Authentication tab
+4. Click "Add user" to create test users
+5. The app will automatically connect to the Auth emulator when running on localhost
+
+**For Production:**
+1. Go to Firebase Console > Authentication > Sign-in method
+2. Enable "Google" as a sign-in provider
+3. Add your authorized domains
+4. Save the configuration
+
+### User Management
+
+**User Data Storage:**
+Users are automatically saved to Firestore in the `users` collection with:
+- `email`: User's email address
+- `displayName`: User's display name
+- `lastLogin`: Timestamp of last login
+- `blockedUser`: Boolean flag (admin-only, default: false)
+
+**Blocking Users:**
+To block a user from accessing the application:
+1. Open Firebase Console > Firestore Database
+2. Navigate to `users` collection
+3. Find the user document (by email or UID)
+4. Add/edit field: `blockedUser: true`
+5. The user will be blocked on their next page load
+
+**Security Rules:**
+- Users can only read/update their own user document
+- Users cannot modify their `blockedUser` field
+- Blocked users cannot access any app data
+- All app operations require authentication and non-blocked status
+
 ## Environment Variables
 
-Create a `.env` file in the `frontend/` directory for local development:
+**For Development:**
+The app automatically connects to Firebase emulators when running on localhost. No environment variables needed for local development.
 
-```env
-VITE_FIREBASE_API_KEY=your-api-key
-VITE_FIREBASE_AUTH_DOMAIN=your-auth-domain
-VITE_FIREBASE_PROJECT_ID=your-project-id
-# ... other Firebase config
+**For Production:**
+Copy `frontend/.env.local.example` to `frontend/.env.local` and fill in your Firebase project credentials:
+
+```bash
+cd frontend
+cp .env.local.example .env.local
+# Edit .env.local with your Firebase config values
 ```
+
+You can find these values in Firebase Console > Project Settings > General > Your apps.
 
 ## Deployment
 
