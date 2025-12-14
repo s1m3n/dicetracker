@@ -1,44 +1,29 @@
+import { Button, VStack, Heading, Text, Center } from '@chakra-ui/react';
+
 interface BlockedPageProps {
   onSignOut: () => Promise<void>;
 }
 
 export const BlockedPage = ({ onSignOut }: BlockedPageProps) => {
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '100vh',
-      padding: '20px',
-    }}>
-      <div style={{
-        maxWidth: '500px',
-        textAlign: 'center',
-      }}>
-        <h1 style={{ color: '#d32f2f', marginBottom: '1rem' }}>
+    <Center minH="100vh" p={5}>
+      <VStack gap={8} maxW="lg" textAlign="center">
+        <Heading size="3xl" color="red.600">
           Access Blocked
-        </h1>
-        <p style={{ marginBottom: '2rem', color: '#666', fontSize: '18px' }}>
+        </Heading>
+        <Text fontSize="lg" color="fg.muted">
           Your account has been blocked from accessing this application.
           Please contact the administrator if you believe this is an error.
-        </p>
+        </Text>
 
-        <button
+        <Button
           onClick={onSignOut}
-          style={{
-            padding: '12px 24px',
-            fontSize: '16px',
-            backgroundColor: '#666',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
+          variant="surface"
+          size="lg"
         >
           Sign Out
-        </button>
-      </div>
-    </div>
+        </Button>
+      </VStack>
+    </Center>
   );
 };
