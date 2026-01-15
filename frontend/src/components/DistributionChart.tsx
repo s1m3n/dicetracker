@@ -86,7 +86,7 @@ export function DistributionChart({ rolls, players, selectedPlayerIndex }: Distr
               const actualCount = sumRolls.length;
               const expectedCount = Math.round(totalRolls * EXPECTED_PROBABILITIES[sumNumber]);
               const difference = actualCount - expectedCount;
-              const actualCountColor = difference === 0 ? 'gray.900' : difference > 0 ? 'green.700' : 'red.700';
+              const sumBorderColor = difference === 0 ? 'gray.300' : difference > 0 ? 'green.700' : 'red.700';
 
               return (
                 <VStack key={sum} flex="1" align="stretch" justify="end" h="full" gap={0}>
@@ -112,7 +112,7 @@ export function DistributionChart({ rolls, players, selectedPlayerIndex }: Distr
 
                   <Box
                     borderWidth="1px"
-                    borderColor="gray.300"
+                    borderColor={sumBorderColor}
                     borderRadius="sm"
                     mt={2}
                     px={1}
@@ -138,7 +138,7 @@ export function DistributionChart({ rolls, players, selectedPlayerIndex }: Distr
                   >
                     <Text
                       fontSize="xs"
-                      color={actualCountColor}
+                      color="gray.700"
                       fontWeight="semibold"
                     >
                       {actualCount}
