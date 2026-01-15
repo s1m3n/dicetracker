@@ -29,8 +29,33 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    match /games/{gameId} {
+      allow read: if isAuthenticated() && isNotBlocked()
+                  && resource.data.userId == request.auth.uid;
+
+      allow create: if isAuthenticated() && isNotBlocked()
+                    && request.resource.data.userId == request.auth.uid;
+
+      allow update: if isAuthenticated() && isNotBlocked()
+                    && resource.data.userId == request.auth.uid;
+
+      allow delete: if isAuthenticated() && isNotBlocked()
+                    && resource.data.userId == request.auth.uid;
+
+      match /rolls/{rollId} {
+        allow read: if isAuthenticated() && isNotBlocked()
+                    && get(/databases/$(database)/documents/games/$(gameId)).data.userId == request.auth.uid;
+
+        allow create: if isAuthenticated() && isNotBlocked()
+                      && get(/databases/$(database)/documents/games/$(gameId)).data.userId == request.auth.uid;
+
+        allow delete: if isAuthenticated() && isNotBlocked()
+                      && get(/databases/$(database)/documents/games/$(gameId)).data.userId == request.auth.uid;
+      }
+    }
+
     match /{document=**} {
-      allow read, write: if isAuthenticated() && isNotBlocked();
+      allow read, write: if false;
     }
   }
 }
