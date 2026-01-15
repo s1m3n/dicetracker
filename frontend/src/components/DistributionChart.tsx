@@ -136,16 +136,17 @@ export function DistributionChart({ rolls, players, selectedPlayerIndex }: Distr
                     borderColor={sumBorderColor}
                     borderRadius="sm"
                     mt={2}
-                    px={1}
+                    px={0.5}
                     py={0.5}
-                    alignSelf="center"
-                    minW="fit-content"
+                    w="full"
                   >
                     <Text
-                      fontSize="sm"
+                      fontSize="10px"
                       fontWeight="bold"
                       textAlign="center"
                       color="gray.700"
+                      fontFamily="mono"
+                      whiteSpace="nowrap"
                     >
                       {sum}
                     </Text>
@@ -157,21 +158,22 @@ export function DistributionChart({ rolls, players, selectedPlayerIndex }: Distr
                     borderWidth="1px"
                     borderColor="gray.300"
                     borderRadius="sm"
-                    minW="fit-content"
-                    alignSelf="center"
-                    px={1}
+                    w="full"
+                    px={0.5}
                   >
                     <Text
-                      fontSize="xs"
+                      fontSize="9px"
                       color="gray.700"
                       fontWeight="semibold"
+                      fontFamily="mono"
+                      whiteSpace="nowrap"
                     >
                       {actualCount}
                     </Text>
-                    <Text fontSize="xs" color="gray.500">
+                    <Text fontSize="9px" color="gray.500" fontFamily="mono" whiteSpace="nowrap">
                       /
                     </Text>
-                    <Text fontSize="xs" color="gray.500">
+                    <Text fontSize="9px" color="gray.500" fontFamily="mono" whiteSpace="nowrap">
                       {expectedCount}
                     </Text>
                   </Box>
