@@ -62,7 +62,7 @@ function Dice({ value, isRolling }: DiceProps) {
   );
 }
 
-export function DiceRoller({ onRoll, disabled }: DiceRollerProps) {
+export function DiceRoller({ onRoll, currentPlayerName, currentPlayerColor, disabled }: DiceRollerProps) {
   const [die1, setDie1] = useState<number>(1);
   const [die2, setDie2] = useState<number>(1);
   const [isRolling, setIsRolling] = useState<boolean>(false);
@@ -99,8 +99,17 @@ export function DiceRoller({ onRoll, disabled }: DiceRollerProps) {
         w="full"
         maxW="300px"
       >
+        <Box
+          w="5"
+          h="5"
+          borderRadius="full"
+          bg={currentPlayerColor}
+          border="2px solid"
+          borderColor="white"
+          boxShadow="0 0 0 1px rgba(0,0,0,0.1)"
+        />
         <FiRefreshCw />
-        {isRolling ? 'Rolling...' : 'Roll Dice'}
+        {isRolling ? 'Rolling...' : `Roll Dice ${currentPlayerName || ''}`}
       </Button>
     </VStack>
   );

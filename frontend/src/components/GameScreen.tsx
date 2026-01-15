@@ -60,67 +60,49 @@ export function GameScreen({
         borderColor="gray.200"
         boxShadow="sm"
       >
-        <VStack gap={0} align="stretch">
-          {/* Top row: Status and actions */}
-          <HStack justify="space-between" px={4} py={3}>
-            <HStack gap={2}>
-              <Box
-                w="2"
-                h="2"
-                borderRadius="full"
-                bg={game.status === 'active' ? 'green.500' : 'gray.400'}
-              />
-              <Text fontSize="xs" fontWeight="medium" color="gray.600">
-                {game.status === 'active' ? 'In Progress' : 'Completed'}
-              </Text>
-            </HStack>
-            <HStack gap={1}>
-              <IconButton
-                aria-label="Home"
-                onClick={onBackToHome}
-                size="sm"
-                variant="ghost"
-              >
-                <FiHome />
-              </IconButton>
-              {game.status === 'active' && (
-                <IconButton
-                  aria-label="End game"
-                  onClick={handleEndGame}
-                  disabled={isEnding}
-                  size="sm"
-                  variant="ghost"
-                  colorPalette="green"
-                >
-                  <FiCheck />
-                </IconButton>
-              )}
-              <IconButton
-                aria-label="Sign out"
-                onClick={onSignOut}
-                size="sm"
-                variant="ghost"
-              >
-                <FiLogOut />
-              </IconButton>
-            </HStack>
+        <HStack justify="space-between" px={4} py={3}>
+          <HStack gap={2}>
+            <Box
+              w="2"
+              h="2"
+              borderRadius="full"
+              bg={game.status === 'active' ? 'green.500' : 'gray.400'}
+            />
+            <Text fontSize="xs" fontWeight="medium" color="gray.600">
+              {game.status === 'active' ? 'In Progress' : 'Completed'}
+            </Text>
           </HStack>
-
-          {/* Bottom row: Current player */}
-          {game.status === 'active' && (
-            <Box px={4} py={2} bg="gray.50" borderTopWidth="1px" borderColor="gray.100">
-              <HStack gap={2}>
-                <Text fontSize="xs" color="gray.600">
-                  Current Turn:
-                </Text>
-                <Box w="3" h="3" borderRadius="full" bg={currentPlayer.color} />
-                <Text fontSize="sm" fontWeight="bold" color="gray.900">
-                  {currentPlayer.name}
-                </Text>
-              </HStack>
-            </Box>
-          )}
-        </VStack>
+          <HStack gap={1}>
+            <IconButton
+              aria-label="Home"
+              onClick={onBackToHome}
+              size="sm"
+              variant="ghost"
+            >
+              <FiHome />
+            </IconButton>
+            {game.status === 'active' && (
+              <IconButton
+                aria-label="End game"
+                onClick={handleEndGame}
+                disabled={isEnding}
+                size="sm"
+                variant="ghost"
+                colorPalette="green"
+              >
+                <FiCheck />
+              </IconButton>
+            )}
+            <IconButton
+              aria-label="Sign out"
+              onClick={onSignOut}
+              size="sm"
+              variant="ghost"
+            >
+              <FiLogOut />
+            </IconButton>
+          </HStack>
+        </HStack>
       </Box>
 
       {/* Main content */}
