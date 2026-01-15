@@ -72,6 +72,8 @@ export function DistributionChart({ rolls, players, selectedPlayerIndex }: Distr
     ? calculatedSegmentHeight
     : baseSegmentHeight;
 
+  const barWidth = `${100 / 11}%`; // Each bar takes exactly 1/11th of total width (11 possible sums: 2-12)
+
   return (
     <Box p={4} bg="white" borderRadius="lg" borderWidth="1px" borderColor="gray.200">
       {totalRolls === 0 ? (
@@ -79,8 +81,18 @@ export function DistributionChart({ rolls, players, selectedPlayerIndex }: Distr
           <Text fontSize="sm">No rolls yet. Start rolling!</Text>
         </Box>
       ) : (
-        <Box position="relative" h={containerHeight + 60} overflow="hidden">
-          <HStack align="end" gap={0.5} h={maxHeight} position="absolute" bottom="60px" left="0" right="0" overflow="hidden">
+        <Box position="relative" h={containerHeight + 60} overflow="hidden" w="full">
+          <Box
+            display="flex"
+            alignItems="end"
+            h={maxHeight}
+            position="absolute"
+            bottom="60px"
+            left="0"
+            right="0"
+            overflow="hidden"
+            w="full"
+          >
             {Object.entries(rollsBySum).map(([sum, sumRolls]) => {
               const sumNumber = parseInt(sum);
               const actualCount = sumRolls.length;
@@ -89,7 +101,16 @@ export function DistributionChart({ rolls, players, selectedPlayerIndex }: Distr
               const sumBorderColor = difference === 0 ? 'gray.300' : difference > 0 ? 'green.700' : 'red.700';
 
               return (
-                <VStack key={sum} flex="1" align="stretch" justify="end" h="full" gap={0}>
+                <Box
+                  key={sum}
+                  w={barWidth}
+                  h="full"
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="stretch"
+                  justifyContent="end"
+                  px={0.5}
+                >
                   <Box position="relative" flexGrow={1} display="flex" flexDirection="column" justifyContent="end">
                     <VStack gap={0} align="stretch" zIndex={1} overflow="hidden" maxH={availableHeightForSegments}>
                       {sumRolls.map((roll: Roll, idx: number) => (
@@ -117,8 +138,8 @@ export function DistributionChart({ rolls, players, selectedPlayerIndex }: Distr
                     mt={2}
                     px={1}
                     py={0.5}
-                    display="inline-block"
                     alignSelf="center"
+                    minW="fit-content"
                   >
                     <Text
                       fontSize="sm"
@@ -129,12 +150,16 @@ export function DistributionChart({ rolls, players, selectedPlayerIndex }: Distr
                       {sum}
                     </Text>
                   </Box>
-                  <HStack
+                  <Box
+                    display="flex"
                     gap={0.5}
-                    justify="center"
+                    justifyContent="center"
                     borderWidth="1px"
                     borderColor="gray.300"
                     borderRadius="sm"
+                    minW="fit-content"
+                    alignSelf="center"
+                    px={1}
                   >
                     <Text
                       fontSize="xs"
@@ -149,11 +174,11 @@ export function DistributionChart({ rolls, players, selectedPlayerIndex }: Distr
                     <Text fontSize="xs" color="gray.500">
                       {expectedCount}
                     </Text>
-                  </HStack>
-                </VStack>
+                  </Box>
+                </Box>
               );
             })}
-          </HStack>
+          </Box>
         </Box>
       )}
     </Box>
