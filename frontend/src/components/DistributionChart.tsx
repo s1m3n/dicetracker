@@ -49,8 +49,8 @@ export function DistributionChart({ rolls, players, selectedPlayerIndex }: Distr
 
   const totalRolls = rolls.length;
   const maxCount = Math.max(...Object.values(rollsBySum).map(r => r.length), 1);
-  const containerHeight = 400;
-  const topMargin = 80; // Large margin at top so bars never reach it
+  const containerHeight = 300;
+  const topMargin = 10; // Small margin at top
   const maxHeight = containerHeight - topMargin;
 
   // Reserve space for legend text below bars (sum + count)
@@ -75,19 +75,19 @@ export function DistributionChart({ rolls, players, selectedPlayerIndex }: Distr
   const barWidth = `${100 / 11}%`; // Each bar takes exactly 1/11th of total width (11 possible sums: 2-12)
 
   return (
-    <Box p={4} bg="white" borderRadius="lg" borderWidth="1px" borderColor="gray.200">
+    <Box p={2} bg="white" borderRadius="lg" borderWidth="1px" borderColor="gray.200">
       {totalRolls === 0 ? (
-        <Box textAlign="center" py={12} color="gray.500">
+        <Box textAlign="center" py={8} color="gray.500">
           <Text fontSize="sm">No rolls yet. Start rolling!</Text>
         </Box>
       ) : (
-        <Box position="relative" h={containerHeight + 60} overflow="hidden" w="full">
+        <Box position="relative" h={containerHeight + 50} overflow="hidden" w="full">
           <Box
             display="flex"
             alignItems="end"
             h={maxHeight}
             position="absolute"
-            bottom="60px"
+            bottom="50px"
             left="0"
             right="0"
             overflow="hidden"
