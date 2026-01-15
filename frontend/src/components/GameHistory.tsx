@@ -1,6 +1,7 @@
 import { Box, VStack, HStack, Text, Button, Spinner, Badge } from '@chakra-ui/react';
 import { FiClock, FiUsers, FiTrendingUp } from 'react-icons/fi';
 import type { Game } from '../types/game';
+import { useLocale } from '../hooks/useLocale';
 
 interface GameHistoryProps {
   games: Game[];
@@ -10,6 +11,8 @@ interface GameHistoryProps {
 }
 
 export function GameHistory({ games, onSelectGame, onNewGame, loading = false }: GameHistoryProps) {
+  const { t, locale } = useLocale();
+
   const formatDate = (date: Date): string => {
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
@@ -17,12 +20,21 @@ export function GameHistory({ games, onSelectGame, onNewGame, loading = false }:
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
-    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    if (diffMins < 1) return t('justNow');
+    if (diffMins < 60) {
+      const unit = diffMins === 1 ? t('minuteAgo') : t('minutesAgo');
+      return locale === 'es' ? `${t('ago')} ${diffMins} ${unit}` : `${diffMins} ${unit} ${t('ago')}`;
+    }
+    if (diffHours < 24) {
+      const unit = diffHours === 1 ? t('hourAgo') : t('hoursAgo');
+      return locale === 'es' ? `${t('ago')} ${diffHours} ${unit}` : `${diffHours} ${unit} ${t('ago')}`;
+    }
+    if (diffDays < 7) {
+      const unit = diffDays === 1 ? t('dayAgo') : t('daysAgo');
+      return locale === 'es' ? `${t('ago')} ${diffDays} ${unit}` : `${diffDays} ${unit} ${t('ago')}`;
+    }
 
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -33,7 +45,7 @@ export function GameHistory({ games, onSelectGame, onNewGame, loading = false }:
     return (
       <Box maxW="800px" mx="auto" p={8} textAlign="center">
         <Spinner size="xl" color="blue.500" />
-        <Text mt={4} color="gray.600">Loading games...</Text>
+        <Text mt={4} color="gray.600">{t('loadingGames')}</Text>
       </Box>
     );
   }
@@ -47,7 +59,7 @@ export function GameHistory({ games, onSelectGame, onNewGame, loading = false }:
           size="lg"
           w="full"
         >
-          New Game
+          {t('newGame')}
         </Button>
 
         {games.length === 0 ? (
@@ -60,10 +72,10 @@ export function GameHistory({ games, onSelectGame, onNewGame, loading = false }:
             borderColor="gray.300"
           >
             <Text fontSize="md" color="gray.500" mb={2}>
-              No games yet
+              {t('noGamesYet')}
             </Text>
             <Text fontSize="sm" color="gray.400">
-              Tap "New Game" above to start
+              {t('tapNewGameToStart')}
             </Text>
           </Box>
         ) : (
@@ -85,14 +97,14 @@ export function GameHistory({ games, onSelectGame, onNewGame, loading = false }:
                   boxShadow: 'md',
                 }}
               >
-                <HStack justify="space-between" align="start">
-                  <VStack align="start" gap={2} flex="1">
-                    <HStack gap={2}>
+                <VStack align="stretch" gap={3} w="full">
+                  <HStack justify="space-between" align="start">
+                    <HStack gap={2} flexWrap="wrap">
                       <Badge
                         colorPalette={game.status === 'active' ? 'green' : 'gray'}
                         size="sm"
                       >
-                        {game.status === 'active' ? 'Active' : 'Completed'}
+                        {game.status === 'active' ? t('active') : t('completed')}
                       </Badge>
                       <HStack gap={1} color="gray.600" fontSize="sm">
                         <FiClock />
@@ -100,40 +112,41 @@ export function GameHistory({ games, onSelectGame, onNewGame, loading = false }:
                       </HStack>
                     </HStack>
 
-                    <HStack gap={3} mt={1}>
-                      <HStack gap={1} color="gray.700">
-                        <FiUsers />
-                        <Text fontSize="sm" fontWeight="medium">
-                          {game.players.length} player{game.players.length > 1 ? 's' : ''}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      flexShrink={0}
+                    >
+                      <FiTrendingUp />
+                      {t('view')}
+                    </Button>
+                  </HStack>
+
+                  <HStack gap={3}>
+                    <HStack gap={1} color="gray.700">
+                      <FiUsers />
+                      <Text fontSize="sm" fontWeight="medium">
+                        {game.players.length} {game.players.length === 1 ? t('player') : t('players')}
+                      </Text>
+                    </HStack>
+                  </HStack>
+
+                  <HStack gap={2} flexWrap="wrap">
+                    {game.players.map((player, idx) => (
+                      <HStack key={idx} gap={2}>
+                        <Box
+                          w="3"
+                          h="3"
+                          borderRadius="full"
+                          bg={player.color}
+                        />
+                        <Text fontSize="sm" color="gray.700">
+                          {player.name}
                         </Text>
                       </HStack>
-                    </HStack>
-
-                    <HStack gap={2} mt={1}>
-                      {game.players.map((player, idx) => (
-                        <HStack key={idx} gap={2}>
-                          <Box
-                            w="3"
-                            h="3"
-                            borderRadius="full"
-                            bg={player.color}
-                          />
-                          <Text fontSize="sm" color="gray.700">
-                            {player.name}
-                          </Text>
-                        </HStack>
-                      ))}
-                    </HStack>
-                  </VStack>
-
-                  <Button
-                    size="sm"
-                    variant="outline"
-                  >
-                    <FiTrendingUp />
-                    View
-                  </Button>
-                </HStack>
+                    ))}
+                  </HStack>
+                </VStack>
               </Box>
             ))}
           </VStack>

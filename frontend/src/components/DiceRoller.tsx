@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Box, Button, HStack, VStack } from '@chakra-ui/react';
 import { FiRefreshCw } from 'react-icons/fi';
+import { useLocale } from '../hooks/useLocale';
 
 interface DiceRollerProps {
   onRoll: (die1: number, die2: number) => void;
@@ -63,6 +64,7 @@ function Dice({ value, isRolling }: DiceProps) {
 }
 
 export function DiceRoller({ onRoll, currentPlayerName, currentPlayerColor, disabled }: DiceRollerProps) {
+  const { t } = useLocale();
   const [die1, setDie1] = useState<number>(1);
   const [die2, setDie2] = useState<number>(1);
   const [isRolling, setIsRolling] = useState<boolean>(false);
@@ -109,7 +111,7 @@ export function DiceRoller({ onRoll, currentPlayerName, currentPlayerColor, disa
           boxShadow="0 0 0 1px rgba(0,0,0,0.1)"
         />
         <FiRefreshCw />
-        {isRolling ? 'Rolling...' : `Roll Dice ${currentPlayerName || ''}`}
+        {isRolling ? t('rolling') : `${t('rollDice')} ${currentPlayerName || ''}`}
       </Button>
     </VStack>
   );

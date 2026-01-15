@@ -8,12 +8,15 @@ import { BlockedPage } from './components/BlockedPage';
 import { GameHistory } from './components/GameHistory';
 import { GameSetup } from './components/GameSetup';
 import { GameScreen } from './components/GameScreen';
+import { Toaster } from './components/ui/toaster';
+import { useLocale } from './hooks/useLocale';
 import type { Player } from './types/game';
 import './App.css';
 
 type AppView = 'history' | 'setup' | 'game';
 
 function App() {
+  const { t } = useLocale();
   const { user, userData, loading: authLoading, signIn, signOutUser } = useAuth();
   const [view, setView] = useState<AppView>('history');
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
@@ -90,84 +93,87 @@ function App() {
   };
 
   return (
-    <Box minH="100vh" bg="gray.50">
-      {view === 'history' && (
-        <>
-          <Box
-            position="sticky"
-            top="0"
-            zIndex="10"
-            bg="white"
-            borderBottomWidth="1px"
-            borderColor="gray.200"
-            boxShadow="sm"
-            px={4}
-            py={3}
-          >
-            <HStack justify="space-between">
-              <Text fontSize="lg" fontWeight="bold">
-                Dice Tracker
-              </Text>
-              <Button
-                onClick={signOutUser}
-                size="sm"
-                variant="ghost"
-              >
-                <FiLogOut />
-              </Button>
-            </HStack>
-          </Box>
-          <GameHistory
-            games={games}
-            onSelectGame={handleSelectGame}
-            onNewGame={handleStartNewGame}
-            loading={gamesLoading}
+    <>
+      <Box minH="100vh" bg="gray.50">
+        {view === 'history' && (
+          <>
+            <Box
+              position="sticky"
+              top="0"
+              zIndex="10"
+              bg="white"
+              borderBottomWidth="1px"
+              borderColor="gray.200"
+              boxShadow="sm"
+              px={4}
+              py={3}
+            >
+              <HStack justify="space-between">
+                <Text fontSize="lg" fontWeight="bold">
+                  {t('diceTracker')}
+                </Text>
+                <Button
+                  onClick={signOutUser}
+                  size="sm"
+                  variant="ghost"
+                >
+                  <FiLogOut />
+                </Button>
+              </HStack>
+            </Box>
+            <GameHistory
+              games={games}
+              onSelectGame={handleSelectGame}
+              onNewGame={handleStartNewGame}
+              loading={gamesLoading}
+            />
+          </>
+        )}
+
+        {view === 'setup' && (
+          <>
+            <Box
+              position="sticky"
+              top="0"
+              zIndex="10"
+              bg="white"
+              borderBottomWidth="1px"
+              borderColor="gray.200"
+              boxShadow="sm"
+              px={{ base: 2, sm: 4 }}
+              py={{ base: 2, sm: 3 }}
+            >
+              <HStack justify="space-between">
+                <Text fontSize={{ base: "md", sm: "lg" }} fontWeight="bold">
+                  {t('setupGame')}
+                </Text>
+                <Button
+                  onClick={signOutUser}
+                  size="sm"
+                  variant="ghost"
+                >
+                  <FiLogOut />
+                </Button>
+              </HStack>
+            </Box>
+            <GameSetup onStartGame={handleCreateGame} />
+          </>
+        )}
+
+        {view === 'game' && game && (
+          <GameScreen
+            game={game}
+            rolls={rolls}
+            onRoll={handleRoll}
+            onEndGame={handleEndGame}
+            onBackToHome={handleBackToHome}
+            onSignOut={signOutUser}
+            loading={gameLoading}
           />
-        </>
-      )}
-
-      {view === 'setup' && (
-        <>
-          <Box
-            position="sticky"
-            top="0"
-            zIndex="10"
-            bg="white"
-            borderBottomWidth="1px"
-            borderColor="gray.200"
-            boxShadow="sm"
-            px={4}
-            py={3}
-          >
-            <HStack justify="space-between">
-              <Text fontSize="lg" fontWeight="bold">
-                Setup Game
-              </Text>
-              <Button
-                onClick={signOutUser}
-                size="sm"
-                variant="ghost"
-              >
-                <FiLogOut />
-              </Button>
-            </HStack>
-          </Box>
-          <GameSetup onStartGame={handleCreateGame} />
-        </>
-      )}
-
-      {view === 'game' && game && (
-        <GameScreen
-          game={game}
-          rolls={rolls}
-          onRoll={handleRoll}
-          onEndGame={handleEndGame}
-          onBackToHome={handleBackToHome}
-          onSignOut={signOutUser}
-          loading={gameLoading}
-        />
-      )}
-    </Box>
+        )}
+      </Box>
+      <Toaster />
+    </>
   );
 }
 

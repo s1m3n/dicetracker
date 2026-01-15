@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, VStack, Heading, Text, Center } from '@chakra-ui/react';
 import { Alert } from '@chakra-ui/react';
+import { useLocale } from '../hooks/useLocale';
 
 interface LoginPageProps {
   onSignIn: () => Promise<void>;
@@ -17,6 +18,7 @@ const GoogleIcon = () => (
 );
 
 export const LoginPage = ({ onSignIn }: LoginPageProps) => {
+  const { t } = useLocale();
   const [signingIn, setSigningIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,7 +29,7 @@ export const LoginPage = ({ onSignIn }: LoginPageProps) => {
       await onSignIn();
     } catch (error) {
       console.error('Login error:', error);
-      setError('Failed to sign in. Please try again.');
+      setError(t('signInError'));
       setSigningIn(false);
     }
   };
@@ -35,9 +37,9 @@ export const LoginPage = ({ onSignIn }: LoginPageProps) => {
   return (
     <Center minH="100vh" p={5}>
       <VStack gap={8} maxW="md" w="full">
-        <Heading size="2xl">Dice Tracker</Heading>
+        <Heading size="2xl">{t('appTitle')}</Heading>
         <Text color="fg.muted" textAlign="center">
-          Sign in with your Google account to continue
+          {t('signInPrompt')}
         </Text>
 
         <Button
@@ -48,7 +50,7 @@ export const LoginPage = ({ onSignIn }: LoginPageProps) => {
           w="full"
         >
           <GoogleIcon />
-          {signingIn ? 'Signing in...' : 'Sign in with Google'}
+          {signingIn ? t('signingIn') : t('signInWithGoogle')}
         </Button>
 
         {error && (

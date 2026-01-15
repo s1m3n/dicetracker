@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Box, Text, HStack, VStack } from '@chakra-ui/react';
+import { Box, Text, VStack } from '@chakra-ui/react';
 import type { Roll, Player } from '../types/game';
 
 interface DistributionChartProps {

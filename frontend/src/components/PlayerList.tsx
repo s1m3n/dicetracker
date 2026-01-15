@@ -1,5 +1,6 @@
 import { Box, HStack, Text } from '@chakra-ui/react';
 import type { Player, Roll } from '../types/game';
+import { useLocale } from '../hooks/useLocale';
 
 interface PlayerListProps {
   players: Player[];
@@ -15,6 +16,8 @@ export function PlayerList({
   rolls,
   onPlayerClick,
 }: PlayerListProps) {
+  const { t } = useLocale();
+
   const getPlayerRollCount = (playerIndex: number): number => {
     return rolls.filter(roll => roll.playerIndex === playerIndex).length;
   };
@@ -30,7 +33,7 @@ export function PlayerList({
   return (
     <Box p={4} bg="white" borderRadius="lg" borderWidth="1px" borderColor="gray.200">
       <Text fontSize="sm" fontWeight="bold" mb={3} color="gray.700">
-        Filter by Player (click to filter)
+        {t('filterByPlayer')}
       </Text>
       <HStack gap={2} flexWrap="wrap">
         {players.map((player, index) => {

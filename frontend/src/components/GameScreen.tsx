@@ -5,6 +5,7 @@ import type { Game, Roll } from '../types/game';
 import { DiceRoller } from './DiceRoller';
 import { DistributionChart } from './DistributionChart';
 import { PlayerList } from './PlayerList';
+import { useLocale } from '../hooks/useLocale';
 
 interface GameScreenProps {
   game: Game;
@@ -25,6 +26,7 @@ export function GameScreen({
   onSignOut,
   loading = false,
 }: GameScreenProps) {
+  const { t } = useLocale();
   const [selectedPlayerIndex, setSelectedPlayerIndex] = useState<number | null>(null);
   const [isEnding, setIsEnding] = useState(false);
 
@@ -43,7 +45,7 @@ export function GameScreen({
     return (
       <Box textAlign="center" py={20}>
         <Spinner size="xl" color="blue.500" />
-        <Text mt={4} color="gray.600">Loading game...</Text>
+        <Text mt={4} color="gray.600">{t('loadingGame')}</Text>
       </Box>
     );
   }
@@ -69,7 +71,7 @@ export function GameScreen({
               bg={game.status === 'active' ? 'green.500' : 'gray.400'}
             />
             <Text fontSize="xs" fontWeight="medium" color="gray.600">
-              {game.status === 'active' ? 'In Progress' : 'Completed'}
+              {game.status === 'active' ? t('inProgress') : t('completed')}
             </Text>
           </HStack>
           <HStack gap={1}>
