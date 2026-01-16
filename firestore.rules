@@ -8,7 +8,8 @@ service cloud.firestore {
     }
 
     function isNotBlocked() {
-      return !get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('blockedUser', false);
+      let userPath = /databases/$(database)/documents/users/$(request.auth.uid);
+      return !exists(userPath) || !get(userPath).data.get('blockedUser', false);
     }
 
     function isOwner(userId) {
