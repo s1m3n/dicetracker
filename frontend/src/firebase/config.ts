@@ -1,10 +1,10 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, connectAuthEmulator } from 'firebase/auth';
+import { getAuth, connectAuthEmulator, browserLocalPersistence, setPersistence } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyCoABXAPkFY7AAp8tBZUWzFICmbX2iCJ1A',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'thedicetracker.firebaseapp.com',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'thedicetracker.web.app',
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'thedicetracker',
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'thedicetracker.firebasestorage.app',
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '1044596557320',
@@ -15,6 +15,11 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const firestore = getFirestore(app);
+
+// Set persistence to fix iOS storage partitioning issues
+setPersistence(auth, browserLocalPersistence).catch((error) => {
+  console.warn('Failed to set auth persistence:', error);
+});
 
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
