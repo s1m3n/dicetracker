@@ -14,6 +14,7 @@ export const translations = {
 
     // GameSetup
     enterPlayerNames: 'Enter player names and set order',
+    quickAdd: 'Quick add:',
     playerPlaceholder: 'Player',
     addPlayer: 'Add Player',
     allPlayerNamesMustBeFilled: 'All player names must be filled in',
@@ -74,6 +75,7 @@ export const translations = {
 
     // GameSetup
     enterPlayerNames: 'Pon los nombres y establece el orden',
+    quickAdd: 'Agregar rápido:',
     playerPlaceholder: 'Jugador',
     addPlayer: 'Agregar Jugador',
     allPlayerNamesMustBeFilled: 'Todos los nombres de jugadores deben estar completos',

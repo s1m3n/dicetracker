@@ -29,9 +29,9 @@ export interface GameWithRolls extends Game {
 export const PLAYER_COLORS = [
   '#1E3A8A', // darker blue
   '#166534', // darker green
-  '#115E59', // darker teal
+  '#3c0202', // dark red
   '#854D0E', // darker yellow
-  '#C2410C', // darker orange
+  '#3d7acc', // darker orange
   '#6B21A8', // darker purple
 ];
 
@@ -48,3 +48,10 @@ export const EXPECTED_DISTRIBUTION: Record<number, number> = {
   11: 2 / 36,
   12: 1 / 36,
 };
+
+export interface RememberedPlayerName {
+  normalizedName: string;
+  displayName: string;
+  count: number;
+  lastUsed: Date;
+}

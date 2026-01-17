@@ -3,6 +3,7 @@ import { Box, Button, HStack, Text } from '@chakra-ui/react';
 import { FiLogOut } from 'react-icons/fi';
 import { useAuth } from './hooks/useAuth';
 import { useGames, useGame, createGame, addRoll, advanceTurn, endGame } from './hooks/useGame';
+import { savePlayerNames } from './hooks/usePlayerNames';
 import { LoginPage } from './components/LoginPage';
 import { BlockedPage } from './components/BlockedPage';
 import { GameHistory } from './components/GameHistory';
@@ -54,6 +55,9 @@ function App() {
 
     try {
       const gameId = await createGame(players, user.uid);
+      savePlayerNames(user.uid, players.map(p => p.name)).catch((error) => {
+        console.error('Error saving player names:', error);
+      });
       setSelectedGameId(gameId);
       setView('game');
     } catch (error) {
@@ -156,7 +160,7 @@ function App() {
                 </Button>
               </HStack>
             </Box>
-            <GameSetup onStartGame={handleCreateGame} />
+            <GameSetup onStartGame={handleCreateGame} userId={user.uid} />
           </>
         )}
 

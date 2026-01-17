@@ -1,20 +1,24 @@
 import { useState } from 'react';
-import { Box, Button, Input, VStack, HStack, IconButton, Text, ColorPicker, Portal, parseColor } from '@chakra-ui/react';
+import { Box, Button, Input, VStack, HStack, IconButton, Text, ColorPicker, Portal, parseColor, Flex } from '@chakra-ui/react';
 import { FiTrash2, FiPlus, FiChevronUp, FiChevronDown, FiShuffle } from 'react-icons/fi';
 import type { Player } from '../types/game';
 import { PLAYER_COLORS } from '../types/game';
 import { toaster } from './ui/toaster';
 import { useLocale } from '../hooks/useLocale';
+import { usePlayerNames, normalizePlayerName } from '../hooks/usePlayerNames';
 
 interface GameSetupProps {
-  onStartGame: (players: Player[]) => void;
+  onStartGame: (players: Player[]) => Promise<void>;
+  userId: string;
 }
 
-export function GameSetup({ onStartGame }: GameSetupProps) {
+export function GameSetup({ onStartGame, userId }: GameSetupProps) {
   const { t } = useLocale();
+  const { playerNames: rememberedNames } = usePlayerNames(userId);
   const [playerNames, setPlayerNames] = useState<string[]>(['', '']);
   const [playerColors, setPlayerColors] = useState<string[]>(PLAYER_COLORS.slice(0, 2));
   const [error, setError] = useState<string>('');
+  const [isStarting, setIsStarting] = useState(false);
 
   const handleAddPlayer = () => {
     if (playerNames.length < PLAYER_COLORS.length) {
@@ -35,6 +39,34 @@ export function GameSetup({ onStartGame }: GameSetupProps) {
     newNames[index] = name;
     setPlayerNames(newNames);
     setError('');
+  };
+
+  const handleQuickAddPlayer = (displayName: string) => {
+    const normalizedNewName = normalizePlayerName(displayName);
+    const existingNormalized = playerNames.map(normalizePlayerName);
+
+    if (existingNormalized.includes(normalizedNewName)) {
+      return;
+    }
+
+    const emptyIndex = playerNames.findIndex(name => name.trim() === '');
+
+    if (emptyIndex !== -1) {
+      const newNames = [...playerNames];
+      newNames[emptyIndex] = displayName;
+      setPlayerNames(newNames);
+    } else if (playerNames.length < PLAYER_COLORS.length) {
+      setPlayerNames([...playerNames, displayName]);
+      setPlayerColors([...playerColors, PLAYER_COLORS[playerNames.length]]);
+    }
+    setError('');
+  };
+
+  const getAvailableQuickAddNames = () => {
+    const currentNormalized = playerNames.map(normalizePlayerName);
+    return rememberedNames.filter(
+      (remembered) => !currentNormalized.includes(remembered.normalizedName)
+    );
   };
 
   const handleColorChange = (index: number, color: string) => {
@@ -83,17 +115,23 @@ export function GameSetup({ onStartGame }: GameSetupProps) {
     }));
   };
 
-  const handleStartInOrder = () => {
+  const handleStartInOrder = async () => {
     const players = validateAndCreatePlayers();
     if (players) {
-      onStartGame(players);
+      setIsStarting(true);
+      try {
+        await onStartGame(players);
+      } catch {
+        setIsStarting(false);
+      }
     }
   };
 
-  const handleStartRandom = () => {
+  const handleStartRandom = async () => {
     const players = validateAndCreatePlayers();
     if (!players) return;
 
+    setIsStarting(true);
     const randomIndex = Math.floor(Math.random() * players.length);
     const reorderedPlayers = [...players.slice(randomIndex), ...players.slice(0, randomIndex)];
 
@@ -103,7 +141,11 @@ export function GameSetup({ onStartGame }: GameSetupProps) {
       duration: 3000,
     });
 
-    onStartGame(reorderedPlayers);
+    try {
+      await onStartGame(reorderedPlayers);
+    } catch {
+      setIsStarting(false);
+    }
   };
 
   return (
@@ -114,6 +156,26 @@ export function GameSetup({ onStartGame }: GameSetupProps) {
             {t('enterPlayerNames')}
           </Text>
         </Box>
+
+        {getAvailableQuickAddNames().length > 0 && (
+          <Box>
+            <Text fontSize="xs" color="gray.500" mb={1}>
+              {t('quickAdd')}
+            </Text>
+            <Flex gap={1.5} flexWrap="wrap">
+              {getAvailableQuickAddNames().map((remembered) => (
+                <Button
+                  key={remembered.normalizedName}
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handleQuickAddPlayer(remembered.displayName)}
+                >
+                  {remembered.displayName}
+                </Button>
+              ))}
+            </Flex>
+          </Box>
+        )}
 
         <VStack gap={{ base: 1.5, sm: 2 }} align="stretch">
           {playerNames.map((name, index) => (
@@ -128,9 +190,9 @@ export function GameSetup({ onStartGame }: GameSetupProps) {
                   h={{ base: "6", sm: "7" }}
                   minW="auto"
                   p={0}
-                  border="2px solid"
-                  borderColor="gray.300"
-                  _hover={{ borderColor: "gray.400" }}
+                  border="4px solid"
+                  borderColor={`color-mix(in srgb, ${playerColors[index]} 50%, transparent)`}
+                  borderRadius="full"
                   flexShrink={0}
                 >
                   <ColorPicker.ValueSwatch
@@ -235,6 +297,8 @@ export function GameSetup({ onStartGame }: GameSetupProps) {
             colorPalette="blue"
             size="md"
             w="full"
+            disabled={isStarting}
+            loading={isStarting}
           >
             {t('startInCurrentOrder')}
           </Button>
@@ -243,6 +307,8 @@ export function GameSetup({ onStartGame }: GameSetupProps) {
             colorPalette="purple"
             size="md"
             w="full"
+            disabled={isStarting}
+            loading={isStarting}
           >
             <FiShuffle />
             {t('randomOrder')}
